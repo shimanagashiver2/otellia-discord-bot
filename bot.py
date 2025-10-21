@@ -50,28 +50,33 @@ def transform_url(message_content):
     """
     メッセージ内容から特定のURLを抽出し、fixupx.comの形式に変換する関数
     """
-    # パターン1: https://xcancel.com/(username)/status/(post_id)
-    # URLに #m や ?s=20 など余計なものがついていても検出できるように調整
-    match1 = re.search(r'https://xcancel\.com/(\w+)/status/(\d+)', message_content)
+    # パターン1: 新しい nitter.aishiteiru.moe のURLを検出
+    match1 = re.search(r'https://nitter\.aishiteiru\.moe/(\w+)/status/(\d+)', message_content)
     if match1:
         username = match1.group(1)
         post_id = match1.group(2)
         return f"https://fixupx.com/{username}/status/{post_id}"
 
-    # パターン2: https://rss.xcancel.com/(username)/rss
-    # このURL自体は投稿IDを含まないため、変換が難しいです。
-    # しかし、monitoRSSがこのRSSフィードから取得した結果として
-    # メッセージ内に `xcancel.com/username/status/post_id` も含んでいるはずなので、
-    # パターン1で検出されることを期待します。
-    # もし、rss.xcancel.comのURLしか含まれていない場合のフォールバックを記載します。
-    match2 = re.search(r'https://rss\.xcancel\.com/(\w+)/rss', message_content)
+    # パターン2: 以前の xcancel.com のURLも検出 (念のため残しておきます)
+    match2 = re.search(r'https://xcancel\.com/(\w+)/status/(\d+)', message_content)
     if match2:
         username = match2.group(1)
-        # 投稿IDが不明なため、ユーザーのプロフィールページに変換します
+        post_id = match2.group(2)
+        return f"https://fixupx.com/{username}/status/{post_id}"
+
+    # (念のため) RSSフィードのURL自体を検出するパターン
+    match_rss_nitter = re.search(r'https://nitter\.aishiteiru\.moe/(\w+)/rss', message_content)
+    if match_rss_nitter:
+        username = match_rss_nitter.group(1)
+        return f"（変換元RSS: https://fixupx.com/{username}）"
+
+    match_rss_xcancel = re.search(r'https://rss\.xcancel\.com/(\w+)/rss', message_content)
+    if match_rss_xcancel:
+        username = match_rss_xcancel.group(1)
         return f"（変換元RSS: https://fixupx.com/{username}）"
 
     return None
-
+    
 @client.event
 async def on_ready():
     """
@@ -118,3 +123,4 @@ if __name__ == "__main__":
         # 2. Discord Botを起動 (これがメインの処理になります)
         print("Discord Botを起動します...")
         client.run(DISCORD_TOKEN)
+
