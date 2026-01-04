@@ -51,14 +51,14 @@ def transform_url(message_content):
     メッセージ内容から特定のURLを抽出し、fixupx.comの形式に変換する関数
     """
     # パターン1: aishiteiru.moe のURLを検出 (サブドメインなし)
-    match1 = re.search(r'https://aishiteiru\.moe/(\w+)/status/(\d+)', message_content)
+    match1 = re.search(r'https://aishiteir\.moe/(\w+)/status/(\d+)', message_content)
     if match1:
         username = match1.group(1)
         post_id = match1.group(2)
         return f"https://fixupx.com/{username}/status/{post_id}"
 
     # パターン2: (万が一のため) nitter.aishiteiru.moe のURLも検出
-    match2 = re.search(r'https://nitter\.aishiteiru\.moe/(\w+)/status/(\d+)', message_content)
+    match2 = re.search(r'https://nitter\.privacyredirect\.com/(\w+)/status/(\d+)', message_content)
     if match2:
         username = match2.group(1)
         post_id = match2.group(2)
@@ -72,7 +72,7 @@ def transform_url(message_content):
         return f"https://fixupx.com/{username}/status/{post_id}"
 
     # (念のため) RSSフィードのURL自体を検出するパターン
-    match_rss_nitter = re.search(r'https://aishiteiru\.moe/(\w+)/rss', message_content)
+    match_rss_nitter = re.search(r'https://nitter\.privacyredirect\.moe/(\w+)/rss', message_content)
     if match_rss_nitter:
         username = match_rss_nitter.group(1)
         return f"（変換元RSS: https://fixupx.com/{username}）"
@@ -130,5 +130,6 @@ if __name__ == "__main__":
         # 2. Discord Botを起動 (これがメインの処理になります)
         print("Discord Botを起動します...")
         client.run(DISCORD_TOKEN)
+
 
 
