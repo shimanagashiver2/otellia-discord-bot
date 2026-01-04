@@ -72,7 +72,7 @@ def transform_url(message_content):
         return f"https://fixupx.com/{username}/status/{post_id}"
 
     # (念のため) RSSフィードのURL自体を検出するパターン
-    match_rss_nitter = re.search(r'https://nitter\.privacyredirect\.moe/(\w+)/rss', message_content)
+    match_rss_nitter = re.search(r'https://nitter\.privacyredirect\.com/(\w+)/rss', message_content)
     if match_rss_nitter:
         username = match_rss_nitter.group(1)
         return f"（変換元RSS: https://fixupx.com/{username}）"
@@ -130,6 +130,7 @@ if __name__ == "__main__":
         # 2. Discord Botを起動 (これがメインの処理になります)
         print("Discord Botを起動します...")
         client.run(DISCORD_TOKEN)
+
 
 
 
